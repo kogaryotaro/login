@@ -14,13 +14,16 @@ public class LoginDAO {
 		DBConnector db = new DBConnector();
 		Connection con = db.getConnection();
 		
-		String sql="select * from user where user_name=? and password=?";
+		String sql="select * from user where user_name = ? and password = ?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
 		try {
-			PreparedStatement ps = con.prepareStatement(sql);
+			ps = con.prepareStatement(sql);
 			ps.setString(1, name); 
 			ps.setString(2, password);
 			
-			ResultSet rs= ps.executeQuery(); 
+			rs= ps.executeQuery(); 
 			
 			if(rs.next()) {
 				dto.setName(rs.getString("user_name"));
@@ -29,7 +32,16 @@ public class LoginDAO {
 		} catch (SQLException e){
 			e.printStackTrace();
 		} finally {
-			con.close();
+			// ResultSet, PreparedStatement, Connectionをクローズ
+	        if (rs != null) {
+	            rs.close();
+	        }
+	        if (ps != null) {
+	            ps.close();
+	        }
+	        if (con != null) {
+	            con.close();
+	        }
 		}
 		return dto;
 	}
